@@ -14,7 +14,7 @@
   "paths" : {
     "/v2/service_instances/{instance_id}/x-operation_instances/{operation_name}" : {
       "post" : {
-        "description" : "Initiate the operation. \n",
+        "description" : "Initiate the operation.\n",
         "parameters" : [ {
           "name" : "instance_id",
           "description" : "The instance to be acted upon",
@@ -38,7 +38,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/parameters"
+                  "$ref" : "#/components/schemas/result"
+                }
+              }
+            }
+          },
+          "202" : {
+            "description" : "Job was created. See Response Body.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/task"
                 }
               }
             }
@@ -55,10 +65,109 @@
           }
         }
       }
+    },
+    "/v2/service_instances/{instance_id}/x-job_instances/{job_id}" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "Status is available. See Response Body.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/result"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
     "schemas" : {
+      "task" : {
+        "description" : "Represents a job that was accepted and how to check for the state of the job",
+        "type" : "object",
+        "properties" : {
+          "href" : {
+            "description" : "URL to monitor the state of the job",
+            "type" : "string",
+            "format" : "url"
+          },
+          "id" : {
+            "description" : "Unique identifier for the job",
+            "type" : "string"
+          }
+        }
+      },
+      "job" : {
+        "description" : "Represents a job that was accepted and how to check for the state of the job",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "description" : "Unique identifier for the job",
+            "type" : "string"
+          },
+          "state" : {
+            "description" : "State of the job",
+            "enum" : [ "SCHEDULED", "STARTED", "COMPLETED", "ABORTED" ]
+          },
+          "status" : {
+            "description" : "Status of the job",
+            "enum" : [ "UNDETERMINED", "INPROGRESS", "SUCCESS", "FAILURE" ]
+          },
+          "operation" : {
+            "description" : "Details about the operation that created the job",
+            "type" : "object",
+            "properties" : {
+              "id" : {
+                "description" : "The ID of the operation",
+                "type" : "string"
+              },
+              "url" : {
+                "description" : "The URL of the operation",
+                "type" : "string",
+                "format" : "uri"
+              },
+              "parameters" : {
+                "description" : "The parameters of the operation",
+                "$ref" : "#/components/schemas/parameters"
+              }
+            }
+          },
+          "result" : {
+            "description" : "URL to get the result of the job.",
+            "$ref" : "#/components/schemas/result"
+          },
+          "errors" : {
+            "description" : "Errors that occurred during the job.",
+            "$ref" : "#/components/schemas/errors"
+          },
+          "messages" : {
+            "description" : "Messages emitted during the job.",
+            "$ref" : "#/components/schemas/messages"
+          },
+          "createdBy" : {
+            "description" : "ID of user who initiated the job",
+            "type" : "string"
+          },
+          "createdOn" : {
+            "description" : "The date-time when the job was created",
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedBy" : {
+            "description" : "ID of user who updated the job. Will be same as createdBy except for the abort/cancel case (???)",
+            "type" : "string"
+          },
+          "updatedOn" : {
+            "description" : "The date-time when the job state was last updated",
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "required" : [ "id", "state", "status", "operation", "createdBy", "createdOn", "updatedBy", "updatedOn" ]
+      },
       "parameters" : {
         "type" : "object",
         "description" : "Represents parameters for an operation.",
@@ -92,6 +201,29 @@
           "additionalProperties" : true,
           "required" : [ "schema" ]
         } ]
+      },
+      "messages" : {
+        "description" : "A collection of errors which were raised for the operation",
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/message"
+        }
+      },
+      "message" : {
+        "description" : "Respresents a message emitted during the operation.",
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "description" : "Message that was emitted",
+            "type" : "string"
+          },
+          "timestamp" : {
+            "description" : "The timestamp of the message",
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "required" : [ "message" ]
       },
       "errors" : {
         "description" : "A collection of errors which were raised for the operation",
