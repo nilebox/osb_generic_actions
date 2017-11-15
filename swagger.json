@@ -44,7 +44,7 @@
             }
           },
           "202" : {
-            "description" : "Job was created (. See Response Body.",
+            "description" : "Job was created (and will be executed asynchronously). See Response Body.",
             "content" : {
               "application/json" : {
                 "schema" : {
