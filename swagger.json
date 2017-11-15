@@ -12,9 +12,9 @@
     "url" : "https://virtserver.swaggerhub.com/Atlassian/osbactions/0.1-alpha"
   } ],
   "paths" : {
-    "/v2/service_instances/{instance_id}/x-operation_instances/{operation_name}" : {
+    "/v2/service_instances/{instance_id}/operation_instances/{operation_name}" : {
       "post" : {
-        "description" : "Initiate the operation.\n",
+        "summary" : "Execute the operation.",
         "parameters" : [ {
           "name" : "instance_id",
           "description" : "The instance to be acted upon",
@@ -44,7 +44,7 @@
             }
           },
           "202" : {
-            "description" : "Job was created. See Response Body.",
+            "description" : "Job was created (. See Response Body.",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -66,8 +66,9 @@
         }
       }
     },
-    "/v2/service_instances/{instance_id}/x-job_instances/{job_id}" : {
+    "/v2/service_instances/{instance_id}/job_instances/{job_id}" : {
       "get" : {
+        "summary" : "Fetch the job status.",
         "responses" : {
           "200" : {
             "description" : "Status is available. See Response Body.",
@@ -78,6 +79,24 @@
                 }
               }
             }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Cancel the running job.",
+        "responses" : {
+          "200" : {
+            "description" : "Job has been cancelled"
+          }
+        }
+      }
+    },
+    "/v2/operations" : {
+      "get" : {
+        "summary" : "Get the list of operations supported by the broker.",
+        "responses" : {
+          "200" : {
+            "description" : "MUST return an OpenAPI document that specifies each of the exposed operations"
           }
         }
       }
