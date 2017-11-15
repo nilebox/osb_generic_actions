@@ -1,8 +1,8 @@
 {
   "openapi" : "3.0.0",
   "info" : {
-    "version" : "1.0-oas3",
-    "title" : "OSB generic actions spec",
+    "version" : "0.1-alpha",
+    "title" : "OSB generic actions spec (proposal)",
     "contact" : {
       "email" : "nislamov@atlassian.com"
     }
@@ -96,7 +96,14 @@
         "summary" : "Get the list of operations supported by the broker.",
         "responses" : {
           "200" : {
-            "description" : "MUST return an OpenAPI document that specifies each of the exposed operations"
+            "description" : "MUST return an OpenAPI document that specifies each of the exposed operations",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/operations"
+                }
+              }
+            }
           }
         }
       }
@@ -116,6 +123,12 @@
           "id" : {
             "description" : "Unique identifier for the job",
             "type" : "string"
+          }
+        },
+        "example" : {
+          "task" : {
+            "href" : "/v2/service_instances/9f10fa37-315f-4bcd-a543-acf3eedc2f1f/job_instances/012460b5-4b49-4269-83fc-3524290c0b9e",
+            "id" : "012460b5-4b49-4269-83fc-3524290c0b9e"
           }
         }
       },
@@ -219,7 +232,11 @@
           },
           "additionalProperties" : true,
           "required" : [ "schema" ]
-        } ]
+        } ],
+        "example" : {
+          "schema" : "/v2/operations#components/backup",
+          "backup_url" : "http://s3.amazonaws.com/2017-11-15.tar.gz"
+        }
       },
       "messages" : {
         "description" : "A collection of errors which were raised for the operation",
@@ -243,6 +260,60 @@
           }
         },
         "required" : [ "message" ]
+      },
+      "operations" : {
+        "description" : "Specification of supported operation in the OpenAPI format.",
+        "type" : "object",
+        "example" : {
+          "openapi" : "3.0.0",
+          "info" : {
+            "version" : 2.13,
+            "title" : "Database Operations",
+            "contact" : {
+              "name" : "Database Team",
+              "email" : "database@atlassian.com"
+            }
+          },
+          "paths" : {
+            "/v2/service_instances/{instance_id}/operation_instances/backup" : {
+              "post" : {
+                "operationId" : "backup",
+                "description" : "Backup all the data in the database.\nThis results in a job being created and scheduled to run.\n",
+                "parameters" : [ {
+                  "name" : "instance_id",
+                  "description" : "The database instance to be backed up",
+                  "in" : "path",
+                  "required" : true,
+                  "schema" : {
+                    "type" : "string"
+                  }
+                } ],
+                "responses" : {
+                  "202" : {
+                    "description" : "Backup request for {instance_id} has be accepted and is processing",
+                    "content" : {
+                      "application/json" : {
+                        "schema" : {
+                          "ref" : "https://openservicebrokerapi.org/operations.json#/definitions/task"
+                        }
+                      }
+                    }
+                  },
+                  "default" : {
+                    "description" : "unexpected error",
+                    "content" : {
+                      "application/json" : {
+                        "schema" : {
+                          "ref" : "https://openservicebrokerapi.org/operations.json#/definitions/errors"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "errors" : {
         "description" : "A collection of errors which were raised for the operation",
