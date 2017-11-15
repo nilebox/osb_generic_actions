@@ -1,0 +1,125 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "version" : "1.0-oas3",
+    "title" : "OSB generic actions spec",
+    "contact" : {
+      "email" : "nislamov@atlassian.com"
+    }
+  },
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/Atlassian/osbactions/0.1-alpha"
+  } ],
+  "paths" : {
+    "/v2/service_instances/{instance_id}/x-operation_instances/{operation_name}" : {
+      "post" : {
+        "description" : "Initiate the operation. \n",
+        "parameters" : [ {
+          "name" : "instance_id",
+          "description" : "The instance to be acted upon",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "operation_name",
+          "description" : "The operation name, e.g. \"backup\"",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Operation completed successfully. See Response Body.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/parameters"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "unexpected error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/errors"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "parameters" : {
+        "type" : "object",
+        "description" : "Represents parameters for an operation.",
+        "additionalProperties" : true
+      },
+      "result" : {
+        "type" : "object",
+        "description" : "Represents result of an operation or job.\nThe result may reference an external resource via `href` or may\nembed the result and specify the schema via `schema`\n",
+        "oneOf" : [ {
+          "description" : "References an external resource",
+          "type" : "object",
+          "properties" : {
+            "href" : {
+              "description" : "URL to the result of a job as an external resource",
+              "type" : "string",
+              "format" : "uri"
+            }
+          },
+          "additionalProperties" : false,
+          "required" : [ "href" ]
+        }, {
+          "description" : "Embeds the results and provides a schema for the results",
+          "type" : "object",
+          "properties" : {
+            "schema" : {
+              "description" : "Unique identifier for the job",
+              "type" : "string",
+              "format" : "uri"
+            }
+          },
+          "additionalProperties" : true,
+          "required" : [ "schema" ]
+        } ]
+      },
+      "errors" : {
+        "description" : "A collection of errors which were raised for the operation",
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/error"
+        }
+      },
+      "error" : {
+        "description" : "Respresents a message emitted during the operation.",
+        "type" : "object",
+        "properties" : {
+          "error" : {
+            "description" : "An operation specific error identifier",
+            "type" : "integer"
+          },
+          "description" : {
+            "description" : "Description of the error",
+            "type" : "string"
+          },
+          "timestamp" : {
+            "description" : "The timestamp of the error",
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "required" : [ "message" ]
+      }
+    }
+  }
+}
