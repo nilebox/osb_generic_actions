@@ -86,7 +86,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/result"
+                  "$ref" : "#/components/schemas/job"
                 }
               }
             }
@@ -133,12 +133,12 @@
           },
           "id" : {
             "description" : "Unique identifier for the job",
-            "type" : "string",
-            "example" : {
-              "href" : "/v2/service_instances/9f10fa37-315f-4bcd-a543-acf3eedc2f1f/job_instances/012460b5-4b49-4269-83fc-3524290c0b9e",
-              "id" : "012460b5-4b49-4269-83fc-3524290c0b9e"
-            }
+            "type" : "string"
           }
+        },
+        "example" : {
+          "href" : "/v2/service_instances/9f10fa37-315f-4bcd-a543-acf3eedc2f1f/job_instances/012460b5-4b49-4269-83fc-3524290c0b9e",
+          "id" : "012460b5-4b49-4269-83fc-3524290c0b9e"
         }
       },
       "job" : {
